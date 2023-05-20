@@ -129,5 +129,47 @@ namespace WeatherInfoAPI.Controllers
         }
 
 
+        // GET: Weather/history
+
+        [Route("Weather/history?cityid=10")]
+        [HttpGet]
+        public String history(string cityid)
+        {
+            String resultString = "";
+
+            try
+            {
+
+                try
+                {
+                    WriteLog("History / cityid: " + cityid);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://history.openweathermap.org/data/2.5/history/city?id="+cityid+"&type=hour&appid=6ecff6f8713f7ce8ba802a3b5424975a");
+
+                httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
+                httpWebRequest.Method = "GET";
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    resultString = streamReader.ReadToEnd();
+                    WriteLog("resultString: " + resultString);
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                WriteLog(" Error has occured on this request path. Details : " + e.ToString());
+                resultString = e.ToString();
+            }
+
+            return resultString;
+        }
     }
 }
