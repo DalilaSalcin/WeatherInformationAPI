@@ -14,6 +14,8 @@ namespace WeatherInfoAPI.Controllers
     
     public class WeatherController : Controller
     {
+        private string usernameAPP = "Dalila";
+        private string passwordAPP = "APITest123!";
 
         public static void WriteLog(string msg)
         {
@@ -43,9 +45,9 @@ namespace WeatherInfoAPI.Controllers
 
         // GET: Weather/current
        
-        [Route("Weather/current?city=Sarajevo")]
+        [Route("Weather/current?city=Sarajevo&username=x&password=y")]
         [HttpGet]
-        public String current(String city)
+        public String current(String city, string username, string password)
         {
             String resultString="";
           
@@ -61,16 +63,22 @@ namespace WeatherInfoAPI.Controllers
 
                     throw;
                 }
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=6ecff6f8713f7ce8ba802a3b5424975a");
-
-                httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
-                httpWebRequest.Method = "GET";
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                if (username == usernameAPP && password == passwordAPP)
                 {
-                    resultString = streamReader.ReadToEnd();
-                    WriteLog("resultString: " + resultString);
-                   
+                    var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=6ecff6f8713f7ce8ba802a3b5424975a");
+
+                    httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
+                    httpWebRequest.Method = "GET";
+                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        resultString = streamReader.ReadToEnd();
+                        WriteLog("resultString: " + resultString);
+
+                    }
+                }
+                else {
+                    resultString = "Unauthorized user or incorrect password: " + username + " " + password;
                 }
 
               
@@ -87,9 +95,9 @@ namespace WeatherInfoAPI.Controllers
 
         // GET: Weather/forecast
 
-        [Route("Weather/forecast?lat=10&lon=9")]
+        [Route("Weather/forecast?lat=10&lon=9&username=x&password=y")]
         [HttpGet]
-        public String forecast(string lat, string lon)
+        public String forecast(string lat, string lon, string username, string password)
         {
             String resultString = "";
 
@@ -105,16 +113,23 @@ namespace WeatherInfoAPI.Controllers
 
                     throw;
                 }
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/forecast?lat="+lat +"&lon="+lon+"&appid=6ecff6f8713f7ce8ba802a3b5424975a");
-
-                httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
-                httpWebRequest.Method = "GET";
-                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
-                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                if (username == usernameAPP && password == passwordAPP)
                 {
-                    resultString = streamReader.ReadToEnd();
-                    WriteLog("resultString: " + resultString);
+                    var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/forecast?lat=" + lat + "&lon=" + lon + "&appid=6ecff6f8713f7ce8ba802a3b5424975a");
 
+                    httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
+                    httpWebRequest.Method = "GET";
+                    var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                    using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                    {
+                        resultString = streamReader.ReadToEnd();
+                        WriteLog("resultString: " + resultString);
+
+                    }
+                }
+                else
+                {
+                    resultString = "Unauthorized user or incorrect password " + username + " " + password;
                 }
 
 
@@ -131,9 +146,9 @@ namespace WeatherInfoAPI.Controllers
 
         // GET: Weather/history
 
-        [Route("Weather/history?cityid=10")]
+        [Route("Weather/history?cityid=10&username=x&password=y")]
         [HttpGet]
-        public String history(string cityid)
+        public String history(string cityid, string username, string password)
         {
             String resultString = "";
 
@@ -149,7 +164,8 @@ namespace WeatherInfoAPI.Controllers
 
                     throw;
                 }
-                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://history.openweathermap.org/data/2.5/history/city?id="+cityid+"&type=hour&appid=6ecff6f8713f7ce8ba802a3b5424975a");
+                if (username == usernameAPP && password == passwordAPP) { 
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("http://history.openweathermap.org/data/2.5/history/city?id=" + cityid + "&type=hour&appid=6ecff6f8713f7ce8ba802a3b5424975a");
 
                 httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
                 httpWebRequest.Method = "GET";
@@ -160,9 +176,13 @@ namespace WeatherInfoAPI.Controllers
                     WriteLog("resultString: " + resultString);
 
                 }
-
-
             }
+             else
+            {
+                resultString = "Unauthorized user or incorrect password " + username + " " + password;
+            }
+
+        }
             catch (Exception e)
             {
                 WriteLog(" Error has occured on this request path. Details : " + e.ToString());
