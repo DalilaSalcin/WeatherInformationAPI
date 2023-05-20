@@ -47,12 +47,20 @@ namespace WeatherInfoAPI.Controllers
         [HttpGet]
         public String current(String city)
         {
-            String resultString="Poziv";
+            String resultString="";
           
             try
             {
-                Console.WriteLine("Test!");
-                WriteLog("City: " + city);
+
+                try
+                {
+                    WriteLog("Current / City: " + city);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
                 var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/weather?q=" + city + "&units=metric&appid=6ecff6f8713f7ce8ba802a3b5424975a");
 
                 httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
@@ -69,10 +77,54 @@ namespace WeatherInfoAPI.Controllers
             }
             catch (Exception e)
             {
-                WriteLog("Deserijalizacija neispravna!" + e.ToString());
+                WriteLog("The error has occured. Details:  " + e.ToString());
                 resultString = e.ToString();
             }
            
+            return resultString;
+        }
+
+
+        // GET: Weather/forecast
+
+        [Route("Weather/forecast?lat=10&lon=9")]
+        [HttpGet]
+        public String forecast(string lat, string lon)
+        {
+            String resultString = "";
+
+            try
+            {
+
+                try
+                {
+                    WriteLog("Forecast / lat: " + lat + " lon: " + lon);
+                }
+                catch (Exception)
+                {
+
+                    throw;
+                }
+                var httpWebRequest = (HttpWebRequest)WebRequest.Create("https://api.openweathermap.org/data/2.5/forecast?lat="+lat +"&lon="+lon+"&appid=6ecff6f8713f7ce8ba802a3b5424975a");
+
+                httpWebRequest.Headers.Add("appid", "6ecff6f8713f7ce8ba802a3b5424975a");
+                httpWebRequest.Method = "GET";
+                var httpResponse = (HttpWebResponse)httpWebRequest.GetResponse();
+                using (var streamReader = new StreamReader(httpResponse.GetResponseStream()))
+                {
+                    resultString = streamReader.ReadToEnd();
+                    WriteLog("resultString: " + resultString);
+
+                }
+
+
+            }
+            catch (Exception e)
+            {
+                WriteLog(" Error has occured on this request path. Details : " + e.ToString());
+                resultString = e.ToString();
+            }
+
             return resultString;
         }
 
